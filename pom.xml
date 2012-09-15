@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsichemaLocation="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>MyProject</groupId>
+  <artifactId>MyProject</artifactId>
+  <name>My project</name>
+  <version>1.0</version>
+  <packaging>pom</packaging>
+  <properties>
+    <sonar.language>php</sonar.language>
+    <sonar.phpUnit.mainTestClass>/tests/AllTests.php</sonar.phpUnit.mainTestClass>
+    <sonar.phase>generate-sources</sonar.phase>
+    <sonar.phpcpd.min.tokens>100</sonar.phpcpd.min.tokens>
+    <sonar.phpcpd.min.lines>200</sonar.phpcpd.min.lines>
+
+    <!--
+    <sonar.php.file.suffixes>php,inc,module,install</sonar.php.file.suffixes>
+    <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+    <sonar.phpPmd.analyzeOnly >true</sonar.phpPmd.analyzeOnly>
+    <sonar.phpCodesniffer.analyzeOnly>true</sonar.phpCodesniffer.analyzeOnly>
+    <sonar.phpDepend.analyzeOnly>true</sonar.phpDepend.analyzeOnly>
+    <sonar.phpUnit.coverage.analyzeOnly>true</sonar.phpUnit.coverage.analyzeOnly>
+    <sonar.phpUnit.analyzeOnly>true</sonar.phpUnit.analyzeOnly>
+    <sonar.phpcpd.analyzeOnly>true</sonar.phpcpd.analyzeOnly>
+    <sonar.exclusions>${basedir}/sites/all/modules/custom/admin_menu/,${basedir}/sites/all/modules/custom/authcache/</sonar.exclusions>
+    -->
+
+  </properties>
+  <build>
+    <directory>sonar</directory>
+    <sourceDirectory>${basedir}/docroot/sites/all/modules/custom</sourceDirectory>
+    <testSourceDirectory>${basedir}/docroot/tests</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>LATEST</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${basedir}/docroot/sites/all/modules/custom</source>
+                <source>${basedir}/docroot/sites/all/themes</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project> 
+                                                                                                                                                                                                                                             

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="My nightly build project" default="build">
+  <property file="${basedir}/properties/build.properties" />
+  <!-- Poject release name used Jenkins variables -->
+  <property environment="env" />
+  <property name="release.name" value="${env.JOB_NAME}-${env.BUILD_ID}" />
+
+  <target name="deploy" depends="tag-release,copy-ssh,restore" />
+
+  <target name="tag-release"
+          description="Make tag release in Mercurial">
+    <exec executable="hg">
+      <arg value="tag" />
+      <arg value="CI-${release.name}" />
+    </exec>
+    <exec executable="hg">
+      <arg value="pull" />
+      <arg value="-u" />
+    </exec>
+    <exec executable="hg">
+      <arg value="push" />
+    </exec>
+  </target>
+
+  <target name="zip-release"
+          depends="tag-release"
+          description="Release tar.gz source">
+    <mkdir dir="${build.dir}" />
+    <!-- Zip release -->
+    <tar destfile="${build.dir}/${release.name}.tar" basedir="${basedir}/src" />
+    <gzip destfile="${build.dir}/${release.name}.tar.gz" src="${build.dir}/${release.name}.tar" />
+    <!-- Zip restore scripts -->
+    <tar destfile="${build.dir}/restore.tar" basedir="${basedir}/scripts/restore" />
+    <gzip destfile="${build.dir}/restore.tar.gz" src="${build.dir}/restore.tar" />
+    <!-- Delete temp .tar file -->
+    <delete file="${build.dir}/${release.name}.tar" />
+    <delete file="${build.dir}/restore.tar" />
+  </target>
+
+  <target name="copy-ssh"
+          depends="zip-release"
+          description="Copy over ssh the release tar.gz">
+    <!-- Copy the release to distant server -->
+    <scp file="${build.dir}/${release.name}.tar.gz"
+         todir="${deploy.user}@${deploy.server}:${deploy.path}"
+         password="${deploy.pass}"
+         trust="true" />
+    <!-- Delete local release file -->
+    <delete file="${build.dir}/${release.name}.tar.gz" />
+    <!-- Copy the restore scripts to distant server -->
+    <scp file="${build.dir}/restore.tar.gz"
+         todir="${deploy.user}@${deploy.server}:${deploy.path}"
+         password="${deploy.pass}"
+         trust="true" />
+  </target>
+
+  <target name="restore"
+          description="Launch a distant script to restore site with the release tar.gz">
+    <sshexec host="${deploy.server}"
+             username="${deploy.user}"
+             password="${deploy.pass}"
+             trust="yes"
+             command="cd ${deploy.path};
+                      tar xzf restore.tar.gz;
+                      tar xzf ${release.name}.tar.gz;
+                      ./scripts/restore.sh;" />
+  </target>
+
+</project>

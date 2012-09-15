@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="My project" default="build">
+  <property file="${basedir}/properties/build.properties" />
+  <!-- Poject release name used Jenkins variables -->
+  <property environment="env" />
+  <property name="release.name" value="${env.JOB_NAME}-${env.BUILD_ID}" />
+
+  <target name="build" depends="prepare,lint,parallel-tasks,phpunit,phpcb,phpcb2,doxygen" />
+
+  <target name="clean"
+          description="Cleanup build artifacts">
+    <delete dir="${basedir}/build/api" />
+    <delete dir="${basedir}/build/code-browser" />
+    <delete dir="${basedir}/build/coverage" />
+    <delete dir="${basedir}/build/logs" />
+    <delete dir="${basedir}/build/pdepend" />
+    <delete dir="${basedir}/build/docs" />
+  </target>
+
+  <target name="prepare" depends="clean"
+          description="Prepare for build">
+    <mkdir dir="${basedir}/build/api" />
+    <!-- Fix a bug for Html Reports  -->
+    <touch file="${basedir}/build/api/README.txt" />
+    <mkdir dir="${basedir}/build/code-browser" />
+    <mkdir dir="${basedir}/build/coverage" />
+    <mkdir dir="${basedir}/build/logs" />
+    <mkdir dir="${basedir}/build/pdepend" />
+    <mkdir dir="${basedir}/build/docs" />
+  </target>
+
+  <target name="lint"
+          description="Perform a syntax check of the project sources using php -l">
+    <apply executable="php" failonerror="true">
+      <arg value="-l" />
+
+      <fileset dir="${source1}">
+        <include name="**/*.php" />
+        <include name="**/*.inc" />
+        <include name="**/*.module" />
+        <include name="**/*.install" />
+        <modified />
+      </fileset>
+
+      <fileset dir="${source2}">
+        <include name="**/*.php" />
+        <include name="**/*.inc" />
+        <include name="**/*.module" />
+        <include name="**/*.install" />
+        <modified />
+      </fileset>
+
+      <fileset dir="${basedir}/tests">
+        <include name="**/*.php" />
+        <modified />
+      </fileset>
+    </apply>
+  </target>
+
+  <target name="parallel-tasks"
+          description="Run the pdepend, phpmd, phpcpd, phpcs and phploc tasks in parallel using a maximum of 2 threads.">
+    <parallel threadCount="2">
+      <sequential>
+        <antcall target="pdepend" />
+        <antcall target="phpmd" />
+      </sequential>
+      <antcall target="phpcpd" />
+      <antcall target="phpcs" />
+      <antcall target="phploc" />
+    </parallel>
+  </target>
+
+  <target name="phpunit"
+          description="Run unit tests using PHPUnit and generates junit.xml and clover.xml">
+    <exec executable="phpunit" failonerror="true">
+      <arg value="--configuration" />
+      <arg value="${basedir}/build/phpunit.xml" />
+      <arg value="--log-junit" />
+      <arg value="${basedir}/build/logs/junit.xml" />
+      <arg value="--coverage-clover" />
+      <arg value="build/logs/clover.xml" />
+      <arg value="--coverage-html" />
+      <arg value="build/logs" />
+      <arg value="${basedir}/tests/AllTests.php" />
+    </exec>
+  </target>
+
+  <target name="pdepend"
+          description="Generate jdepend.xml and software metrics charts using PHP_Depend">
+    <exec executable="pdepend">
+      <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
+      <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
+      <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
+      <arg value="--suffix=php,inc,module,install" />
+      <arg path="${source1},${source2}" />
+    </exec>
+  </target>
+
+  <target name="phpmd"
+          description="Generate pmd.xml using PHPMD">
+    <exec executable="phpmd">
+      <arg value="${basedir}/${source1}/,${basedir}/${source2}/" />
+      <arg value="xml" />
+      <arg value="${basedir}/build/phpmd.xml" />
+      <arg value="--reportfile" />
+      <arg value="${basedir}/build/logs/pmd.xml" />
+      <arg value="--suffixes" />
+      <arg value="php,inc,module,install" />
+    </exec>
+  </target>
+
+  <target name="phpcpd"
+          description="Generate pmd-cpd.xml using PHPCPD">
+    <exec executable="phpcpd">
+      <arg value="--suffixes" />
+      <arg value="php,inc,module,install" />
+      <arg value="--log-pmd" />
+      <arg value="${basedir}/build/logs/pmd-cpd.xml" />
+      <arg path="${source1}" />
+      <arg path="${source2}" />
+    </exec>
+  </target>
+
+  <target name="phploc"
+          description="Measure project size using PHPLOC and generate phploc.csv">
+    <exec executable="phploc">
+      <arg value="--suffixes" />
+      <arg value="php,inc,module,install" />
+      <arg value="--log-csv" />
+      <arg value="${basedir}/build/logs/phploc.csv" />
+      <arg path="${source1}" />
+      <arg path="${source2}" />
+    </exec>
+  </target>
+
+  <target name="phpcs"
+          description="Generate checkstyle.xml using PHP_CodeSniffer">
+    <exec executable="phpcs" output="/dev/null">
+      <arg value="--report=checkstyle" />
+      <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
+      <arg value="--standard=${basedir}/build/phpcs.xml" />
+      <arg value="--extensions=php,inc,module,install" />
+      <arg value="--ignore=*.js,*.css" />
+      <arg path="${source1}" />
+      <arg path="${source2}" />
+    </exec>
+  </target>
+
+  <target name="phpcb"
+          description="Aggregate tool output with PHP_CodeBrowser">
+    <exec executable="phpcb">
+      <arg value="--log" />
+      <arg path="${basedir}/build/logs" />
+      <arg value="--source" />
+      <arg path="${source1}" />
+      <arg value="--output" />
+      <arg path="${basedir}/build/code-browser" />
+    </exec>
+  </target>
+
+  <target name="phpcb2"
+          description="Aggregate tool output with PHP_CodeBrowser">
+    <exec executable="phpcb">
+      <arg value="--log" />
+      <arg path="${basedir}/build/logs" />
+      <arg value="--source" />
+      <arg path="${source2}" />
+      <arg value="--output" />
+      <arg path="${basedir}/build/code-browser" />
+    </exec>
+  </target>
+
+  <target name="doxygen">
+    <exec dir="${basedir}" executable="${doxypath}/doxygen" failonerror="false" output="/dev/null">
+      <arg line="Doxyfile" />
+    </exec>
+  </target>
+
+  <target name="zip-release"
+          description="Release tar.gz source">
+    <mkdir dir="${build.dir}" />
+    <tar destfile="${build.dir}/${release.name}.tar" basedir="${basedir}/src" />
+    <gzip destfile="${build.dir}/${release.name}.tar.gz" src="${build.dir}/${release.name}.tar" />
+    <!-- Delete temp .tar file -->
+    <delete file="${build.dir}/${release.name}.tar" />
+  </target>
+
+  <target name="copy-ssh-release"
+          description="Copy over ssh the release tar.gz">
+    <scp file="${build.dir}/${release.name}.tar.gz"
+         todir="${deploy.user}@${deploy.server}:${deploy.path}"
+         password="${deploy.pass}"
+         trust="true" />
+    <!-- Delete local release file -->
+    <delete file="${build.dir}/${release.name}.tar.gz" />
+  </target>
+
+  <target name="restore"
+          description="Launch a distant script to restore site with the release tar.gz">
+    <sshexec host="${deploy.server}"
+             username="${deploy.user}"
+             password="${deploy.pass}"
+             trust="yes"
+             command="cd ${deploy.path};
+                      ./scripts/restore.sh;" />
+  </target>
+
+</project>
