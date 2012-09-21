@@ -16,13 +16,13 @@
     <!--
     <sonar.php.file.suffixes>php,inc,module,install</sonar.php.file.suffixes>
     <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-    <sonar.phpPmd.analyzeOnly >true</sonar.phpPmd.analyzeOnly>
+    <sonar.phpPmd.analyzeOnly>true</sonar.phpPmd.analyzeOnly>
     <sonar.phpCodesniffer.analyzeOnly>true</sonar.phpCodesniffer.analyzeOnly>
     <sonar.phpDepend.analyzeOnly>true</sonar.phpDepend.analyzeOnly>
     <sonar.phpUnit.coverage.analyzeOnly>true</sonar.phpUnit.coverage.analyzeOnly>
     <sonar.phpUnit.analyzeOnly>true</sonar.phpUnit.analyzeOnly>
     <sonar.phpcpd.analyzeOnly>true</sonar.phpcpd.analyzeOnly>
-    <sonar.exclusions>${basedir}/sites/all/modules/custom/admin_menu/,${basedir}/sites/all/modules/custom/authcache/</sonar.exclusions>
+    <sonar.exclusions>${basedir}/src/sites/all/modules/admin_menu/,${basedir}/sites/all/modules/authcache/</sonar.exclusions>
     -->
 
   </properties>
