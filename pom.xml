@@ -28,8 +28,8 @@
   </properties>
   <build>
     <directory>sonar</directory>
-    <sourceDirectory>${basedir}/docroot/sites/all/modules/custom</sourceDirectory>
-    <testSourceDirectory>${basedir}/docroot/tests</testSourceDirectory>
+    <sourceDirectory>${basedir}/src/sites/all/modules/custom</sourceDirectory>
+    <testSourceDirectory>${basedir}/tests</testSourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -44,8 +44,8 @@
             </goals>
             <configuration>
               <sources>
-                <source>${basedir}/docroot/sites/all/modules/custom</source>
-                <source>${basedir}/docroot/sites/all/themes</source>
+                <source>${basedir}/src/sites/all/modules/custom</source>
+                <source>${basedir}/src/sites/all/themes</source>
               </sources>
             </configuration>
           </execution>
@@ -53,5 +53,5 @@
       </plugin>
     </plugins>
   </build>
-</project> 
-                                                                                                                                                                                                                                             
+</project>
+
