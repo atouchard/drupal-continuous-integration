@@ -176,33 +176,4 @@
     </exec>
   </target>
 
-  <target name="zip-release"
-          description="Release tar.gz source">
-    <mkdir dir="${build.dir}" />
-    <tar destfile="${build.dir}/${release.name}.tar" basedir="${basedir}/src" />
-    <gzip destfile="${build.dir}/${release.name}.tar.gz" src="${build.dir}/${release.name}.tar" />
-    <!-- Delete temp .tar file -->
-    <delete file="${build.dir}/${release.name}.tar" />
-  </target>
-
-  <target name="copy-ssh-release"
-          description="Copy over ssh the release tar.gz">
-    <scp file="${build.dir}/${release.name}.tar.gz"
-         todir="${deploy.user}@${deploy.server}:${deploy.path}"
-         password="${deploy.pass}"
-         trust="true" />
-    <!-- Delete local release file -->
-    <delete file="${build.dir}/${release.name}.tar.gz" />
-  </target>
-
-  <target name="restore"
-          description="Launch a distant script to restore site with the release tar.gz">
-    <sshexec host="${deploy.server}"
-             username="${deploy.user}"
-             password="${deploy.pass}"
-             trust="yes"
-             command="cd ${deploy.path};
-                      ./scripts/restore.sh;" />
-  </target>
-
 </project>
