@@ -32,18 +32,24 @@
         <h3>Welcome to Drupal-ci Pages.</h3>
 
         <p>This project is a fork of <a href="http://jenkins-php.org/">Template for Jenkins Jobs for PHP Projects</a> by Sebastian Bergmann suitable for Drupal 6.</p>
-        <p>For all your Drupal projects, it's not necessary to test Drupal Core and contrib modules.<br>The default configuration of this project suppose you have your custom code in <em>/src/sites/all/modules/custom</em> and <em>/src/sites/all/themes</em> folders. You can change these paths in <em>/properties/build.properties</em></p>
-        <p>Below, you can watch a typical architecture of continuous integration :</p>
-        <p><img src="images/ic.jpg" alt=""></p>
-        <p>We use <a href="http://mercurial.selenic.com/">Mercurial</a> for versionning, <a href="http://jenkins-ci.org/">Jenkins</a> the continuous integration server and <a href="http://www.sonarsource.org/">Sonar</a> to manage code quality.</p>
-        <div>We have 2 ant projects:
+        <p>For all your Drupal projects, you don't need to test Drupal Core and contrib modules, just your modules and your themes.</p>
+        <p>The default configuration analyzes custom code in <em>src/sites/all/modules/custom</em> and <em>src/sites/all/themes</em> folders. You can change these paths in <em>properties/build.properties</em></p>
+        <p>Below, you can watch a typical architecture for continuous integration :</p>
+        <img src="images/ic.jpg" alt="">
+        <p>The basic tools are :</p>
+        <ul>
+          <li>an <abbr title="Source Code Management">SCM</abbr>, <a href="http://mercurial.selenic.com/">Mercurial</a> for example</li>
+          <li><a href="http://jenkins-ci.org/">Jenkins</a>, the continuous integration server</li>
+          <li><a href="http://www.sonarsource.org/">Sonar</a>, for love.</li>
+        </ul>
+        <div>
+          <p><a href="http://ant.apache.org/">Ant</a> is used to manage tasks, you can also used Maven, Phing, ...</p>
           <ul>
-            <li>build.xml : default project (adapted from the original) launches common tasks.</li>
-            <li>nightbuild.xml : deploy application on a remote server.</li>
+            <li><strong>build.xml</strong> : default project (adapted from <a href="http://jenkins-php.org/">jenkins-php</a>) launches common tasks.</li>
+            <li><strong>nightbuild.xml</strong> : deploy application on a remote server and launch Selenium tests.</li>
           </ul>
         </div>
-        <p>This project doesn't use the same configuration than <a href="http://jenkins-php.org/">Template for Jenkins Jobs for PHP Projects</a> because we use Drupal 6 (PHP 5.2).</p>
-        <p>We need specific version of PEAR plugins and we use Doxygen for documentation with the help of <a href="https://github.com/mattfarina/drupal-6-doxygen">Matt Farina</a> instead of phpdox (PHP 5.3).</p>
+        <p><strong>Note : </strong>If you run PHP under 5.3, you need specific versions of PEAR plugins and use Doxygen for documentation with the help of <a href="https://github.com/mattfarina/drupal-6-doxygen">Matt Farina</a> instead of phpdox (PHP 5.3).</p>
         <h3>PEAR</h3>
         <p>To start, this is a typical installation for PEAR :</p>
         <pre><code>pear config-create ~/ .pearrc
@@ -52,7 +58,7 @@ vi .bashrc
      PATH=$HOME/pear:$PATH
      export PATH
 pear install -o PEAR</code></pre>
-        <p>After that, you can add channels and install plugins (All of your plugins will go under the ~/pear folder).</p>
+        <p>Next, add channels and install PEAR package (All of your packages will go under the ~/pear folder).</p>
         <h4>Channel subscriptions</h4>
         <pre><code>pear channel-update pear.php.net
 pear upgrade-all
@@ -88,7 +94,7 @@ sudo aptitude install jenkins</code></pre>
         <p>By default, Jenkins run on port 8080.<br>
         You can start Jenkins with <a href="https://wiki.jenkins-ci.org/display/JENKINS/Starting+and+Accessing+Jenkins">other command line parameters</a>.</p>
         <p>Go to <a href="http://127.0.0.1:2000">http://127.0.0.1:2000</a> to see Jenkins alive.</p>
-        <p>You can use Jenkins client to download plugins easily :</p>
+        <p>You can use <a href="https://wiki.jenkins-ci.org/display/JENKINS/Jenkins+CLI">Jenkins client</a> to download plugins easily :</p>
         <pre><code>wget http://127.0.0.1:2000/jnlpJars/jenkins-cli.jar</code></pre>
         <p>Now, install Jenkins useful plugins :</p>
         <pre><code>java -jar jenkins-cli.jar -s http://127.0.0.1:2000 install-plugin checkstyle
@@ -103,33 +109,43 @@ java -jar jenkins-cli.jar -s http://127.0.0.1:2000 install-plugin xunit</code></
         <p>Then, restart Jenkins safely :</p>
         <pre><code>java -jar jenkins-cli.jar -s http://127.0.0.1:2000 safe-restart</code></pre>
         <h3>SELENIUM</h3>
-        <p>With <a href="http://seleniumhq.org/">Selenium</a>, you can create and execute functionnal tests of your code source.</p>
-        <p>First, install the Selenium server :</p>
+        <p>First, download and install <a href="http://seleniumhq.org/">Selenium server</a> :</p>
         <pre><code>mkdir ~/SELENIUM
 cd ~/SELENIUM
 wget http://selenium.googlecode.com/files/selenium-server-standalone-2.3.0.jar
+
+## Manage versions easily
 ln -s selenium-server-standalone-2.3.0.jar selenium-server.jar</code></pre>
+        <p>You need to have <a href="http://en.wikipedia.org/wiki/Xvfb">Xvfb</a> installed on server : </p>
+        <pre><code>sudo apt-get install xvfb</code></pre>
+        <p>and running :</p>
+        <pre><code>/usr/bin/Xvfb :99 -ac -screen 0 1024x768x8 &</code></pre>
         <p>To launch your Selenium PHPUnit tests, run the Selenium server :</p>
         <pre><code>java -jar ~/SELENIUM/selenium-server.jar -port 4445</code></pre>
-        <p>This is a basic Selenium test in PHPUnit format (<em>/tests/selenium/phpunit/Example.php</em>) :</p>
+        <p>A basic Selenium test in PHPUnit format :</p>
         <pre class="prettyprint"><code>&lt;?php
 
 require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 
-class Example extends PHPUnit_Extensions_SeleniumTestCase {
-  protected function setUp() {
+class Example extends PHPUnit_Extensions_SeleniumTestCase
+{
+  protected function setUp()
+  {
     $this->setHost("127.0.0.1");
     $this->setPort(4445);
     $this->setBrowser("*chrome");
-    $this->setBrowserUrl("http://www.inserthtml.com/");
+    $this->setBrowserUrl("https://github.com/");
   }
 
-  public function testMyTestCase() {
+  public function testMyTestCase()
+  {
     $this->open("/");
-    $this->type("xpath=(//input[@id='s'])[2]", "mobile");
-    $this->click("css=#search > form > input[type=\"submit\"]");
+    $this->click("link=Search");
     $this->waitForPageToLoad("30000");
-    $this->verifyTextPresent("Creating a Mobile Web Application Part 1: Mobile Design");
+    $this->type("name=q", "drupal");
+    $this->click("css=button.classy");
+    $this->waitForPageToLoad("30000");
+    $this->verifyTextPresent("drupal / drupal");
   }
 }
         </code></pre>
@@ -139,11 +155,11 @@ class Example extends PHPUnit_Extensions_SeleniumTestCase {
         <p>In your Jenkins job configuration, add this script task to run :</p>
         <pre><code>export DISPLAY=":99" && java -jar ~/SELENIUM/selenium-server.jar -singleWindow -ensureCleanSession -browserSessionReuse -htmlSuite *firefox "http://yoursite/" "$WORKSPACE/tests/selenium/suites/Suite.html" "$WORKSPACE/tests/selenium/logs/selenium.html"</code></pre>
         <p>If you want more informations, you can go to <a href="http://centripetal.ca/blog/2011/02/07/getting-started-with-selenium-and-jenkins/">this article</a>.</p>
-        <p>Download the <a href="http://wiki.hudson-ci.org/display/HUDSON/Seleniumhq+Plugin">seleniumhq</a> plugin for Jenkins.
-        If you have the Jenkins client, you can run this command : </p>
+        <p>Download the <a href="http://wiki.hudson-ci.org/display/HUDSON/Seleniumhq+Plugin">seleniumhq</a> plugin for Jenkins : </p>
         <pre><code>java -jar jenkins-cli.jar -s http://127.0.0.1:2000 install-plugin seleniumhq</code></pre>
         <p>Then, restart Jenkins safely :</p>
         <pre><code>java -jar jenkins-cli.jar -s http://127.0.0.1:2000 safe-restart</code></pre>
+        <p>Launch the job and voila !</p>
         <h3>CONTACT</h3>
         <p>Feel free to contact me on <a href="https://github.com/atouchard">github</a> for more informations or <a href="https://github.com/atouchard/drupal-continuous-integration">fork it</a> !</p>
       </section>
