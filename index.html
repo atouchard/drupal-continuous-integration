@@ -153,7 +153,7 @@ class Example extends PHPUnit_Extensions_SeleniumTestCase
         <h4>Selenium and Jenkins</h4>
         <p>In your Jenkins job configuration, add this script task to run :</p>
         <pre><code>export DISPLAY=":99" && phpunit --log-junit=$WORKSPACE/tests/selenium/logs/selenium.xml --coverage-html=$WORKSPACE/tests/selenium/logs $WORKSPACE/tests/selenium/phpunit/AllTests.php</code></pre>
-        <p>Now, in the Jenkins job configutation page, add post-build action to publish JUnit publish tests to tests/selenium/logs/selenium.xml</p>
+        <p>And add post-build action to publish JUnit publish tests to tests/selenium/logs/selenium.xml</p>
         <p>Launch the job and voila !</p>
         <h3>CONTACT</h3>
         <p>Feel free to contact me on <a href="https://github.com/atouchard">github</a> for more informations or <a href="https://github.com/atouchard/drupal-continuous-integration">fork it</a> !</p>
