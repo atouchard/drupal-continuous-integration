@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="My nightly build project" default="build">
   <property file="${basedir}/properties/build.properties" />
-  <!-- Poject release name used Jenkins variables -->
+  <!-- Use Jenkins variables for release name -->
   <property environment="env" />
   <property name="release.name" value="${env.JOB_NAME}-${env.BUILD_ID}" />
 
