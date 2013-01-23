@@ -53,9 +53,8 @@ class MyClassTest extends PHPUnit_Framework_TestSuite {
     $suite   = new PHPUnit_Framework_TestSuite();
     $dirname = dirname(__FILE__);
 
-    // Run the TDD
-    $suite->addTestFile($dirname .'/tdd/TddTests.php');
-    // Add other unit tests
+    $suite->addTestFile($dirname .'/Example.php');
+    // Add other Selenium tests
 
     return $suite;
   }

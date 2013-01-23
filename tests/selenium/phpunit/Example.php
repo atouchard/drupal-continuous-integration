@@ -20,5 +20,3 @@ class Example extends PHPUnit_Extensions_SeleniumTestCase
     $this->verifyTextPresent("Creating a Mobile Web Application Part 1: Mobile Design");
   }
 }
-
-?>
