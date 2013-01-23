@@ -1,39 +1,50 @@
 <?xml version="1.0"?>
-<ruleset name="drupal-coding-standard">
+<ruleset name="Drupal">
   <description>Drupal coding standard</description>
 
-  <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop"/>
-  <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall"/>
-  <rule ref="Generic.CodeAnalysis.JumbledIncrementer"/>
-  <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/>
-  <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/>
-  <rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/>
+  <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" />
+  <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall" />
+  <rule ref="Generic.CodeAnalysis.JumbledIncrementer" />
+  <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement" />
+  <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier" />
+  <rule ref="Generic.CodeAnalysis.UselessOverridingMethod" />
 
-  <rule ref="Generic.Commenting.Todo"/>
+  <rule ref="Generic.Commenting.Todo" />
 
-  <rule ref="Generic.ControlStructures.InlineControlStructure"/>
+  <rule ref="Generic.ControlStructures.InlineControlStructure" />
 
-  <rule ref="Drupal.ControlStructures.ControlSignature"/>
+  <rule ref="Drupal.ControlStructures.ControlSignature" />
 
-  <rule ref="Generic.Files.LineEndings"/>
+  <rule ref="Generic.Files.LineEndings" />
 
-  <rule ref="Generic.Formatting.DisallowMultipleStatements"/>
-  <rule ref="Generic.Formatting.NoSpaceAfterCast"/>
-
-  <rule ref="PEAR.Functions.ValidDefaultValue"/>
-
-  <rule ref="Generic.NamingConventions.ConstructorName"/>
-  <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
-  <rule ref="PEAR.NamingConventions.ValidClassName"/>
-
-  <rule ref="Generic.PHP.DisallowShortOpenTag"/>
-  <rule ref="Generic.PHP.NoSilencedErrors"/>
-  <rule ref="Generic.PHP.UpperCaseConstant"/>
-
-  <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
-  <rule ref="Drupal.WhiteSpace.ScopeIndent"/>
+  <rule ref="Generic.Formatting.DisallowMultipleStatements" />
   <!--
-  <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/>
+  <rule ref="Generic.Formatting.MultipleStatementAlignment" />
   -->
+  <rule ref="Generic.Formatting.NoSpaceAfterCast" />
+
+  <!--
+  <rule ref="Generic.Functions.OpeningFunctionBraceBsdAllman" />
+  -->
+  <rule ref="PEAR.Functions.ValidDefaultValue" />
+
+  <rule ref="Generic.NamingConventions.ConstructorName" />
+  <rule ref="Generic.NamingConventions.UpperCaseConstantName" />
+  <rule ref="PEAR.NamingConventions.ValidClassName" />
+
+  <rule ref="Generic.PHP.DisallowShortOpenTag" />
+  <rule ref="Generic.PHP.NoSilencedErrors" />
+  <rule ref="Generic.PHP.UpperCaseConstant" />
+
+  <rule ref="Generic.WhiteSpace.DisallowTabIndent" />
+  <rule ref="Drupal.WhiteSpace.ScopeIndent" />
+  <!--
+  <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace" />
+  -->
+  <exclude-pattern>*.default.inc</exclude-pattern>
+  <exclude-pattern>*.features.inc</exclude-pattern>
+  <exclude-pattern>*.features.node.inc</exclude-pattern>
+  <exclude-pattern>*.features.views.inc</exclude-pattern>
+  <exclude-pattern>*.tpl.php</exclude-pattern>
 </ruleset>
 
