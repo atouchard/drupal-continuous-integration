@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Drupal-ci by atouchard</title>
+    <title>Drupal continuous integration</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -16,10 +16,10 @@
   <body onload="prettyPrint()">
     <div class="wrapper">
       <header>
-        <h1>Drupal-ci</h1>
+        <h1>Drupal continuous integration</h1>
         <p></p>
 
-        <p class="view"><a href="https://github.com/atouchard/drupal-continuous-integration">View the Project on GitHub <small>atouchard/drupal-ci</small></a></p>
+        <p class="view"><a href="https://github.com/atouchard/drupal-continuous-integration">View the Project on GitHub <small>atouchard/drupal-continuous-integration</small></a></p>
 
         <ul>
           <li><a href="https://github.com/atouchard/drupal-continuous-integration/zipball/master">Download <strong>ZIP File</strong></a></li>
@@ -27,13 +27,15 @@
           <li><a href="https://github.com/atouchard/drupal-continuous-integration">View On <strong>GitHub</strong></a></li>
         </ul>
         <a href="https://twitter.com/share" class="twitter-share-button" data-text="Drupal-continuous-integration | Continuous integration for Drupal" data-lang="fr" data-count="none">Tweet</a>
+        <ol id="summary">
+          <li><a href="#pear">Pear</a></li>
+          <li><a href="#jenkins">Jenkins</a></li>
+          <li><a href="#sele">Selenium</a></li>
+        </ol>
       </header>
       <section>
-        <h3>Welcome to Drupal-ci Pages.</h3>
 
-        <p>This project is a fork of <a href="http://jenkins-php.org/">Template for Jenkins Jobs for PHP Projects</a> by Sebastian Bergmann suitable for Drupal 6.</p>
-        <p>For all your Drupal projects, you don't need to test Drupal Core and contrib modules, just your modules and your themes.</p>
-        <p>The default configuration analyzes custom code in <em>src/sites/all/modules/custom</em> and <em>src/sites/all/themes</em> folders. You can change these paths in <em>properties/build.properties</em></p>
+        <p>This project is a fork of <a href="http://jenkins-php.org/">Template for Jenkins Jobs for PHP Projects</a> by Sebastian Bergmann suitable for Drupal.</p>
         <p>Below, you can watch a typical architecture for continuous integration :</p>
         <img src="images/ic.jpg" alt="">
         <p>The basic tools are :</p>
@@ -49,7 +51,11 @@
             <li><strong>nightbuild.xml</strong> : deploy application on a remote server and launch Selenium tests.</li>
           </ul>
         </div>
-        <p><strong>Note : </strong>If you run PHP under 5.3, you need specific versions of PEAR plugins and use Doxygen for documentation with the help of <a href="https://github.com/mattfarina/drupal-6-doxygen">Matt Farina</a> instead of phpdox (PHP 5.3).</p>
+        <p><strong>Note : </strong></p>
+        <p>If you run PHP under 5.3, you need specific versions of PEAR plugins and use Doxygen for documentation with the help of <a href="https://github.com/mattfarina/drupal-6-doxygen">Matt Farina</a> instead of phpdox (PHP 5.3).</p>
+
+        <p>For all your Drupal projects, you don't need to test Drupal Core and contrib modules, just your modules and your themes.<br>The default configuration analyzes custom code in <em>src/sites/all/modules/custom</em> and <em>src/sites/all/themes</em> folders. You can change these paths in <em>properties/build.properties</em></p>
+        <a name="pear"></a>
         <h3>PEAR</h3>
         <p>To start, this is a typical installation for PEAR :</p>
         <pre><code>pear config-create ~/ .pearrc
@@ -79,6 +85,7 @@ pear install --alldeps PHP_CodeSniffer
 pear install --alldeps phpunit/PHP_CodeBrowser
 pear install phpunit/PHPUnit-3.5.5</code></pre>
         <p>You can  view all plugins informations at <a href="http://phpqatools.org/">phpqatools.org</a></p>
+        <a name="jenkins"></a>
         <h3>JENKINS</h3>
         <p>To install Jenkins, go to the <a href="http://jenkins-ci.org/">Jenkins website</a>, download application and follow the instructions.</p>
         <p>For example, on Ubuntu/Debian :</p>
@@ -89,7 +96,7 @@ sudo apt-get install jenkins
 sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
 sudo aptitude update
 sudo aptitude install jenkins</code></pre>
-        <p>Then, run Jenkins on a specific port (--httpPort) :</p>
+        <p>Then, run Jenkins on a specific port (--httpPort) if you want :</p>
         <pre><code>nohup java -jar jenkins.war --httpPort=2000 > ~/logs/jenkins.log 2>&1</code></pre>
         <p>By default, Jenkins run on port 8080.<br>
         You can start Jenkins with <a href="https://wiki.jenkins-ci.org/display/JENKINS/Starting+and+Accessing+Jenkins">other command line parameters</a>.</p>
@@ -108,6 +115,7 @@ java -jar jenkins-cli.jar -s http://127.0.0.1:2000 install-plugin violations
 java -jar jenkins-cli.jar -s http://127.0.0.1:2000 install-plugin xunit</code></pre>
         <p>Then, restart Jenkins safely :</p>
         <pre><code>java -jar jenkins-cli.jar -s http://127.0.0.1:2000 safe-restart</code></pre>
+        <a name="sele"></a>
         <h3>SELENIUM</h3>
         <p>First, download and install <a href="http://seleniumhq.org/">Selenium server</a> :</p>
         <pre><code>mkdir ~/SELENIUM
@@ -148,12 +156,12 @@ class Example extends PHPUnit_Extensions_SeleniumTestCase
   }
 }
         </code></pre>
-        <p>You can run this Selenium test thanks to PHPUnit :</p>
+        <p>You can run this Selenium test with PHPUnit :</p>
         <pre><code>phpunit tests/selenium/phpunit/Example</code></pre>
         <h4>Selenium and Jenkins</h4>
         <p>In your Jenkins job configuration, add this script task to run :</p>
         <pre><code>export DISPLAY=":99" && phpunit --log-junit=$WORKSPACE/tests/selenium/logs/selenium.xml --coverage-html=$WORKSPACE/tests/selenium/logs $WORKSPACE/tests/selenium/phpunit/AllTests.php</code></pre>
-        <p>And add post-build action to publish JUnit publish tests to tests/selenium/logs/selenium.xml</p>
+        <p>Finally, add a post-build action to publish "JUnit publish tests" to tests/selenium/logs/selenium.xml</p>
         <p>Launch the job and voila !</p>
         <h3>CONTACT</h3>
         <p>Feel free to contact me on <a href="https://github.com/atouchard">github</a> for more informations or <a href="https://github.com/atouchard/drupal-continuous-integration">fork it</a> !</p>
